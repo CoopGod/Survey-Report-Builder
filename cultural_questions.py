@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import csv
 
 NUMBER_OF_QUESTIONS = 54
+NUMBER_OF_RESPONSES = 35
 MIN_ANSWER = 1
 MAX_ANSWER = 5
 
@@ -68,7 +69,8 @@ def create_graph(header: str, data: list[int]):
     bar_colors = ['tab:green', 'tab:blue', 'tab:red', 'tab:orange', 'tab:pink']
 
     ax.bar(bar_labels, data, label=bar_labels, color=bar_colors)
-    ax.set_ylim(0, 35)
+    ax.set_ylim(0, NUMBER_OF_RESPONSES)
+    ax.bar_label(ax.containers[0], label_type='edge')
     ax.set_ylabel('Number of Responses')
     ax.set_title(header)
 
@@ -87,15 +89,13 @@ def make_document(grid: list[list[int]], headers: list[str]) -> None:
         create_graph(headers[question], sort_data(grid[question]))
 
 
-def main():
+def main() -> None:
     # Get Data From CSV
     grid, headers, comments = get_csv_data('responses.csv')
     headers.pop(0)  # remove timestamp
     headers.pop(-1)  # remove comment header
     # Create Graphs for each question and upload to document
     make_document(grid, headers)
-
-    pass
 
 
 if __name__ == "__main__":
