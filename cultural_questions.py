@@ -18,7 +18,7 @@ MAX_ANSWER = 5
 def get_csv_data(filename: str) -> list[list[int]] and list[str] and list[str]:
     '''
     Takes a csv file full of data (with a header) and breaks it into 
-    a grid array which it returns.
+    a grid of arrays which it returns.
     '''
     with open(filename, "r") as file:
         rows = list(csv.reader(file, delimiter=','))
@@ -51,7 +51,6 @@ def sort_data(data: list[int]) -> list[int]:
     '''
     This function takes a list of numbers and totals the ammount of each number
     For example: [1,1,1,2,3,4,3] would return [3,1,2,1,0]
-    currently assumes that MIN_ANSWER > 0
     '''
     result = [0] * MAX_ANSWER
     for value in data:
@@ -67,14 +66,16 @@ def create_graph(header: str, data: list[int]) -> None:
     using the the provided data. It saves the graph as an image, 'temp.jpg'.
     '''
     fig, ax = plt.subplots()
-    bar_labels = ['1', '2', '3', '4', '5']
+    bar_labels = []
+    for num in range(MIN_ANSWER, MAX_ANSWER+1):
+        bar_labels.append(f"{num}")
     bar_colors = ['tab:green', 'tab:blue', 'tab:red', 'tab:orange', 'tab:pink']
 
     ax.bar(bar_labels, data, label=bar_labels, color=bar_colors)
     ax.set_ylim(0, NUMBER_OF_RESPONSES)
     ax.bar_label(ax.containers[0], label_type='edge')
     ax.set_ylabel('Number of Responses')
-    ax.set_title(header.split('.')[0]) # just the question number
+    ax.set_title(header.split('.')[0])  # just the question number
 
     plt.savefig('temp.jpg')
     plt.close()
@@ -93,7 +94,8 @@ def make_document(grid: list[list[int]], headers: list[str]) -> None:
     for question in range(len(grid)):
         # create and add graph
         document.add_heading(headers[question], 1)
-        create_graph(headers[question], sort_data(grid[question])) # graph saved as temp.jpg
+        create_graph(headers[question], sort_data(
+            grid[question]))  # graph saved as temp.jpg
         imageFile = Image.open('temp.jpg')
         document.add_picture('temp.jpg')
         imageFile.close()
@@ -112,6 +114,7 @@ def main() -> None:
     make_document(grid, headers)
 
     return
+
 
 if __name__ == "__main__":
     main()
