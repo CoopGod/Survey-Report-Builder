@@ -61,10 +61,10 @@ def sort_data(data: list[int]) -> list[int]:
     return result
 
 
-def create_graph(header: str, data: list[int]):
+def create_graph(header: str, data: list[int]) -> None:
     '''
     This function creates a graph based on the column provided (question num)
-    using the 2d Array 'grid'. It adds the header and returns an Image
+    using the the provided data. It saves the graph as an image, 'temp.jpg'.
     '''
     fig, ax = plt.subplots()
     bar_labels = ['1', '2', '3', '4', '5']
@@ -74,9 +74,10 @@ def create_graph(header: str, data: list[int]):
     ax.set_ylim(0, NUMBER_OF_RESPONSES)
     ax.bar_label(ax.containers[0], label_type='edge')
     ax.set_ylabel('Number of Responses')
-    ax.set_title(header)
+    ax.set_title(header.split('.')[0]) # just the question number
 
-    plt.savefig('temp.jpg', bbox_inches='tight')
+    plt.savefig('temp.jpg')
+    plt.close()
 
 
 def make_document(grid: list[list[int]], headers: list[str]) -> None:
@@ -91,16 +92,14 @@ def make_document(grid: list[list[int]], headers: list[str]) -> None:
     # For each question, create a graph and upload to the document
     for question in range(len(grid)):
         # create and add graph
-        create_graph(headers[question], sort_data(grid[question]))
+        document.add_heading(headers[question], 1)
+        create_graph(headers[question], sort_data(grid[question])) # graph saved as temp.jpg
         imageFile = Image.open('temp.jpg')
         document.add_picture('temp.jpg')
-        
-        # save that sweet, sweet memory
         imageFile.close()
-        plt.close()
-    
-    document.save('report.docx')
 
+    document.save('report.docx')
+    return
 
 
 def main() -> None:
@@ -108,9 +107,11 @@ def main() -> None:
     grid, headers, comments = get_csv_data('responses.csv')
     headers.pop(0)  # remove timestamp
     headers.pop(-1)  # remove comment header
+
     # Create Graphs for each question and upload to document
     make_document(grid, headers)
 
+    return
 
 if __name__ == "__main__":
     main()
