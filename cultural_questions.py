@@ -5,7 +5,9 @@ Author: Cooper Goddard
 Date (init): 2022-11-01 
 '''
 import matplotlib.pyplot as plt
+from PIL import Image
 import csv
+import docx
 
 NUMBER_OF_QUESTIONS = 54
 NUMBER_OF_RESPONSES = 35
@@ -74,7 +76,7 @@ def create_graph(header: str, data: list[int]):
     ax.set_ylabel('Number of Responses')
     ax.set_title(header)
 
-    plt.show()
+    plt.savefig('temp.jpg', bbox_inches='tight')
 
 
 def make_document(grid: list[list[int]], headers: list[str]) -> None:
@@ -83,10 +85,22 @@ def make_document(grid: list[list[int]], headers: list[str]) -> None:
     word document (.docx)
     '''
     # create document to be populated
+    document = docx.Document()
+    document.add_heading("Cultural Questions Analysis", 0)
 
     # For each question, create a graph and upload to the document
     for question in range(len(grid)):
+        # create and add graph
         create_graph(headers[question], sort_data(grid[question]))
+        imageFile = Image.open('temp.jpg')
+        document.add_picture('temp.jpg')
+        
+        # save that sweet, sweet memory
+        imageFile.close()
+        plt.close()
+    
+    document.save('report.docx')
+
 
 
 def main() -> None:
