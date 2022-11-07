@@ -1,6 +1,6 @@
 '''
 This program is used to create graphs from the responses generated from a google form
-Documentation limitations (hardcodes): questions range from 1-54, responses range from 1,5. 2 comment sections
+Documentation limitations (hardcodes): questions range from 1-54, responses range from 1,5. 2 comment sections, 35 surveyee's
 Author: Cooper Goddard
 Date (init): 2022-11-01 
 '''
