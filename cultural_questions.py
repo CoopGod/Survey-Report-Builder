@@ -1,6 +1,6 @@
 '''
 This program is used to create graphs from the responses generated from a google form
-Documentation limitations (hardcodes): questions range from 1-54, responses range from 1,5.
+Documentation limitations (hardcodes): questions range from 1-54, responses range from 1,5. 2 comment sections
 Author: Cooper Goddard
 Date (init): 2022-11-01 
 '''
@@ -11,6 +11,7 @@ import docx
 
 NUMBER_OF_QUESTIONS = 54
 NUMBER_OF_RESPONSES = 35
+NUMBER_OF_COMMENTS = 2
 MIN_ANSWER = 1
 MAX_ANSWER = 5
 
@@ -29,13 +30,14 @@ def get_csv_data(filename: str) -> list[list[int]] and list[str] and list[str]:
         comments = []
         for row in rows:
             row.pop(0)  # remove timestamp
-            comments.append(row.pop(-1))  # remove comment
+            for c in range(NUMBER_OF_COMMENTS): # remove comment sections
+                comments.append(row.pop(-1))  
             grid.append(row)
 
         # Make a new grid, one row for each question
         new_grid = []
-        count = 0
-        while count < NUMBER_OF_QUESTIONS-1:
+        count = 1
+        while count < NUMBER_OF_QUESTIONS:
             new_grid.append([])
             count += 1
 
@@ -81,7 +83,7 @@ def create_graph(header: str, data: list[int]) -> None:
     plt.close()
 
 
-def make_document(grid: list[list[int]], headers: list[str]) -> None:
+def make_document(grid: list[list[int]], headers: list[str], comments: list[str]) -> None:
     '''
     This function uses the data to build graphs and insert them into a
     word document (.docx)
@@ -100,6 +102,16 @@ def make_document(grid: list[list[int]], headers: list[str]) -> None:
         document.add_picture('temp.jpg')
         imageFile.close()
 
+    # add comments, placing space between each user's submission
+    document.add_heading("Comments", 0)
+    for comment_index in range(len(comments)):
+        document.add_paragraph(comments[comment_index])
+
+        # place spacing between user comments
+        if comment_index % NUMBER_OF_COMMENTS:
+            document.add_paragraph("")
+
+
     document.save('report.docx')
     return
 
@@ -107,11 +119,10 @@ def make_document(grid: list[list[int]], headers: list[str]) -> None:
 def main() -> None:
     # Get Data From CSV
     grid, headers, comments = get_csv_data('responses.csv')
-    headers.pop(0)  # remove timestamp
-    headers.pop(-1)  # remove comment header
+    headers.pop(0)  # remove timestamp (useless)
 
     # Create Graphs for each question and upload to document
-    make_document(grid, headers)
+    make_document(grid, headers, comments)
 
     return
 
