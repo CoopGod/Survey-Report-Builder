@@ -9,7 +9,7 @@ from PIL import Image
 import csv
 import docx
 
-NUMBER_OF_QUESTIONS = 54
+NUMBER_OF_QUESTIONS = 53
 NUMBER_OF_RESPONSES = 35
 NUMBER_OF_COMMENTS = 2
 MIN_ANSWER = 1
@@ -21,7 +21,7 @@ def get_csv_data(filename: str) -> list[list[int]] and list[str] and list[str]:
     Takes a csv file full of data (with a header) and breaks it into 
     a grid of arrays which it returns.
     '''
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding="utf8") as file:
         rows = list(csv.reader(file, delimiter=','))
         headers = rows.pop(0)
 
