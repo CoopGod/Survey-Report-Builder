@@ -5,12 +5,13 @@ Author: Cooper Goddard
 Date (init): 2022-11-01 
 '''
 import matplotlib.pyplot as plt
+from math import floor
 from PIL import Image
 import csv
 import docx
 
-NUMBER_OF_QUESTIONS = 53
-NUMBER_OF_RESPONSES = 35
+NUMBER_OF_QUESTIONS = 52
+NUMBER_OF_RESPONSES = 52
 NUMBER_OF_COMMENTS = 2
 MIN_ANSWER = 1
 MAX_ANSWER = 5
@@ -44,7 +45,11 @@ def get_csv_data(filename: str) -> list[list[int]] and list[str] and list[str]:
         # swap rows and columns, adding to the new grid
         for row in range(len(grid)):
             for value in range(len(grid[row])):
-                new_grid[value].append(int(grid[row][value]))
+                current_value = grid[row][value]
+                if current_value == '':
+                    new_grid[value].append(0)
+                else:
+                    new_grid[value].append(floor(float((current_value)))) # floor and integerize
 
     return new_grid, headers, comments
 
@@ -57,7 +62,8 @@ def sort_data(data: list[int]) -> list[int]:
     result = [0] * MAX_ANSWER
     for value in data:
         # add count for the value to proper index
-        result[value-1] += 1
+        if value != 0:
+            result[value-1] += 1
 
     return result
 
